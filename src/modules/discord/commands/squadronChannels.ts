@@ -313,8 +313,7 @@ export class SquadronChannels implements Command {
                 channel.send(Responses.getResponse(Responses.IDNOTFOUND));
                 return
             }
-            let channelsToSelect = channel.guild.channels.cache.filter(channel => categories.map(category => category.id).includes(channel.parentId))
-            channelsToSelect = sampleSize(channelsToSelect, numberToSelect)
+            let channelsToSelect = channel.guild.channels.cache.filter(channel => categories.map(category => category.id).includes(channel.parentId)).random(numberToSelect);
             let embed = new MessageEmbed()
             embed.setTitle("Selected Squadrons")
             embed.setColor([255, 0, 255]);
