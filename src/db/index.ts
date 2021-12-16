@@ -24,7 +24,7 @@ import { IModel, IGuildModel } from './models';
 import App from '../server';
 
 export class DB {
-    private options: mongoose.ConnectionOptions;
+    private options: object;
     private userName: string;
     private password: string;
     private url: string;
