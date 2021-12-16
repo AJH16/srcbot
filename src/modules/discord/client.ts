@@ -42,7 +42,7 @@ export class DiscordClient {
     private db: DB;
 
     constructor() {
-        this.client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+        this.client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES] });
         this.commandsMap = new Map();
         this.login();
         this.listen();

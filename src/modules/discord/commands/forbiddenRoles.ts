@@ -163,7 +163,7 @@ export class ForbiddenRoles implements Command {
                     if (guild) {
                         if (guild.forbidden_roles_id && guild.forbidden_roles_id.length !== 0) {
                             let flags = Permissions.FLAGS;
-                            if (message.guild.me.permissionsIn(message.channel).has([flags.EMBED_LINKS])) {
+                            if (message.channel.type == "DM" || message.guild.me.permissionsIn(message.channel).has([flags.EMBED_LINKS])) {
                                 let embed = new MessageEmbed();
                                 embed.setTitle("Forbidden Roles");
                                 embed.setColor([255, 0, 255]);

@@ -163,7 +163,7 @@ export class SquadronCategories implements Command {
                     if (guild) {
                         if (guild.squadron_channel_category_id && guild.squadron_channel_category_id.length !== 0) {
                             let flags = Permissions.FLAGS;
-                            if (message.guild.me.permissionsIn(message.channel).has([flags.EMBED_LINKS])) {
+                            if (message.channel.type == "DM" || message.guild.me.permissionsIn(message.channel).has([flags.EMBED_LINKS])) {
                                 let embed = new MessageEmbed();
                                 embed.setTitle("Squadron Channel Categories");
                                 embed.setColor([255, 0, 255]);

@@ -70,7 +70,7 @@ export class SquadronChannels implements Command {
                 let categoryToSelect = argsArray[2];
                 try {
                     let flags = Permissions.FLAGS;
-                    if (message.guild.me.permissionsIn(message.channel).has([flags.EMBED_LINKS])) {
+                    if (message.channel.type == "DM" || message.guild.me.permissionsIn(message.channel).has([flags.EMBED_LINKS])) {
                         let embed = await this.getRandomSquadronEmbed(guildId, message.channel as TextChannel, numberToSelect, categoryToSelect);
                         message.channel.send({embeds:[embed]});
                     } else {
@@ -208,7 +208,7 @@ export class SquadronChannels implements Command {
                 let categoryToSelect = argsArray[1];
                 try {
                     let flags = Permissions.FLAGS;
-                    if (message.guild.me.permissionsIn(message.channel).has([flags.MANAGE_CHANNELS])) {
+                    if (message.channel.type == "DM" || message.guild.me.permissionsIn(message.channel).has([flags.MANAGE_CHANNELS])) {
                         await this.sortChannelCategory(guildId, message.channel as TextChannel, categoryToSelect);
                         message.channel.send(Responses.getResponse(Responses.SUCCESS));
                     } else {
