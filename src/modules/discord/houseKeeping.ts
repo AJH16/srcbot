@@ -25,7 +25,7 @@ export class HouseKeeping {
     }
 
     async deletedChannel(channel: discord.Channel) {
-        if (channel.type === 'text') {
+        if (channel.type === 'GUILD_TEXT') {
             let guildId = (channel as discord.TextChannel).guild.id;
 
             try {

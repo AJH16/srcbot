@@ -67,7 +67,7 @@ export class AdminRoles implements Command {
     async add(message: Message, argsArray: string[]) {
         // Only the server admins can set the admin roles
         let member = message.member;
-        if (member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
+        if (member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
             if (argsArray.length === 2) {
                 let guildId = message.guild.id;
                 let adminRoleId = argsArray[1];
@@ -85,7 +85,7 @@ export class AdminRoles implements Command {
                         } else {
                             try {
                                 await message.channel.send(Responses.getResponse(Responses.FAIL));
-                                message.channel.send(Responses.GUILDNOTSETUP);
+                                message.channel.send(Responses.getResponse(Responses.GUILDNOTSETUP));
                             } catch (err) {
                                 App.bugsnagClient.call(err, {
                                     metaData: {
@@ -130,7 +130,7 @@ export class AdminRoles implements Command {
                     } else {
                         try {
                             await message.channel.send(Responses.getResponse(Responses.FAIL));
-                            message.channel.send(Responses.GUILDNOTSETUP);
+                            message.channel.send(Responses.getResponse(Responses.GUILDNOTSETUP));
                         } catch (err) {
                             App.bugsnagClient.call(err, {
                                 metaData: {
@@ -177,7 +177,7 @@ export class AdminRoles implements Command {
                             embed.addField("Ids and Names", idList);
                             embed.setTimestamp(new Date());
                             try {
-                                message.channel.send(embed);
+                                message.channel.send({embeds:[embed]});
                             } catch (err) {
                                 App.bugsnagClient.call(err, {
                                     metaData: {

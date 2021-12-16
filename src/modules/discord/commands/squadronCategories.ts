@@ -71,7 +71,7 @@ export class SquadronCategories implements Command {
                 let guildId = message.guild.id;
                 let squadronChannelCategoryId = argsArray[1];
 
-                if (message.guild.channels.cache.has(squadronChannelCategoryId) && message.guild.channels.cache.get(squadronChannelCategoryId).type === 'category') {
+                if (message.guild.channels.cache.has(squadronChannelCategoryId) && message.guild.channels.cache.get(squadronChannelCategoryId).type === 'GUILD_CATEGORY') {
                     try {
                         let guild = await this.db.model.guild.findOneAndUpdate(
                             {guild_id: guildId},
@@ -169,7 +169,7 @@ export class SquadronCategories implements Command {
                                 embed.setColor([255, 0, 255]);
                                 let idList = "";
                                 guild.squadron_channel_category_id.forEach(id => {
-                                    if (message.guild.channels.cache.has(id) && message.guild.channels.cache.get(id).type === 'category') {
+                                    if (message.guild.channels.cache.has(id) && message.guild.channels.cache.get(id).type === 'GUILD_CATEGORY') {
                                         idList += `${id} - ${message.guild.channels.cache.get(id).name.toUpperCase()}\n`;
                                     } else {
                                         idList += `${id} - Does not exist in Discord. Please delete this from SRCBot`;
@@ -178,7 +178,7 @@ export class SquadronCategories implements Command {
                                 embed.addField("Ids and Names", idList);
                                 embed.setTimestamp(new Date());
                                 try {
-                                    message.channel.send(embed);
+                                    message.channel.send({embeds:[embed]});
                                 } catch (err) {
                                     App.bugsnagClient.call(err, {
                                         metaData: {

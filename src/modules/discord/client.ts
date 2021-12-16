@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Client, DMChannel, Message, User } from 'discord.js';
+import { Client, Intents, DMChannel, Message, User } from 'discord.js';
 import { DiscordSecrets } from '../../secrets';
 import { Responses } from './responseDict';
 import {
@@ -33,6 +33,7 @@ import App from '../../server';
 import { DB } from '../../db';
 import { Command } from "../../interfaces/Command";
 import { SquadronLeaderRoles } from "./commands/squadronLeaderRoles";
+import { Login } from './commands/login';
 
 export class DiscordClient {
     public client: Client;
@@ -41,7 +42,7 @@ export class DiscordClient {
     private db: DB;
 
     constructor() {
-        this.client = new Client();
+        this.client = new Client({ intents: [Intents.FLAGS.GUILDS] });
         this.commandsMap = new Map();
         this.login();
         this.listen();
@@ -60,7 +61,7 @@ export class DiscordClient {
         });
 
         this.client.on("message", async (message) => {
-            if (message.channel.type === 'dm' && !message.author.bot) {
+            if (message.channel.type === 'DM' && !message.author.bot) {
                 this.processDm(message)
             } else if (message.mentions.users.filter(user => {
                 if (user.id === this.client.user.id) {
@@ -83,7 +84,10 @@ export class DiscordClient {
             let helpObject = this.commandsMap.get('help') as Help;
             let message = messageReaction.message
             if (!user.bot && message.embeds && message.embeds.length > 0 && message.embeds[0].title === helpObject.title) {
-                helpObject.emojiCaught(messageReaction);
+                messageReaction.fetch().then(fullMessageReaction =>
+                {
+                    helpObject.emojiCaught(fullMessageReaction);
+                });
             }
         });
 
@@ -123,6 +127,7 @@ export class DiscordClient {
         let forbiddenRoles = new ForbiddenRoles();
         let squadronCategories = new SquadronCategories();
         let squadronChannels = new SquadronChannels();
+        let login = new Login();
 
         this.commandsMap.set("hi", new Hi());
         this.commandsMap.set("help", new Help());
@@ -140,6 +145,7 @@ export class DiscordClient {
         this.commandsMap.set("sqc", squadronCategories);
         this.commandsMap.set("squadchannels", squadronChannels);
         this.commandsMap.set("sqch", squadronChannels);
+        this.commandsMap.set("login", login);
     }
 
     createHelp(): void {

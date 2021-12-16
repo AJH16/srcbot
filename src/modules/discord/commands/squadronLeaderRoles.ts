@@ -129,7 +129,7 @@ export class SquadronLeaderRoles implements Command {
                     } else {
                         try {
                             await message.channel.send(Responses.getResponse(Responses.FAIL));
-                            message.channel.send(Responses.GUILDNOTSETUP);
+                            message.channel.send(Responses.getResponse(Responses.GUILDNOTSETUP));
                         } catch (err) {
                             App.bugsnagClient.call(err, {
                                 metaData: {
@@ -176,7 +176,7 @@ export class SquadronLeaderRoles implements Command {
                             embed.addField("Ids and Names", idList);
                             embed.setTimestamp(new Date());
                             try {
-                                message.channel.send(embed);
+                                message.channel.send({embeds:[embed]});
                             } catch (err) {
                                 App.bugsnagClient.call(err, {
                                     metaData: {

@@ -178,7 +178,7 @@ export class ForbiddenRoles implements Command {
                                 embed.addField("Ids and Names", idList);
                                 embed.setTimestamp(new Date());
                                 try {
-                                    message.channel.send(embed);
+                                    message.channel.send({embeds:[embed]});
                                 } catch (err) {
                                     App.bugsnagClient.call(err, {
                                         metaData: {

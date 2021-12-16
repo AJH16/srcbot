@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Message, MessageEmbed, MessageReaction } from 'discord.js';
+import { Message, MessageEmbed, MessageReaction, PartialMessage, PartialRecipient } from 'discord.js';
 import App from '../../../server';
 import { Responses } from '../responseDict';
 import { HelpSchema } from '../../../interfaces/typings';
@@ -77,7 +77,7 @@ export class Help implements Command {
         }
     }
 
-    async display(message: Message, page: number, item: number) {
+    async display(message: Message | PartialMessage, page: number, item: number) {
         let embed = new MessageEmbed();
         embed.setColor(6684774);
         embed.setTitle(this.title);
@@ -109,17 +109,17 @@ export class Help implements Command {
         }
     }
 
-    async helpList(displayCommands: HelpSchema[], embed: MessageEmbed, message: Message, page: number) {
+    async helpList(displayCommands: HelpSchema[], embed: MessageEmbed, message: Message | PartialMessage, page: number) {
         displayCommands.forEach((help, index) => {
             embed.addField(`${index + 1}. ${help.command}`, help.helpMessage);
         });
-        embed.addField("PAGE", page);
+        embed.addField("PAGE", page.toString());
 
         let member = message.member;
         if (member) {
-            return member.send(embed);
+            return member.send({embeds:[embed]});
         } else {
-            return message.channel.send(embed);
+            return message.channel.send({embeds:[embed]});
         }
     }
 
@@ -135,7 +135,7 @@ export class Help implements Command {
         }
     }
 
-    async helpDescription(command: HelpSchema, embed: MessageEmbed, message: Message, page: number) {
+    async helpDescription(command: HelpSchema, embed: MessageEmbed, message: Message | PartialMessage, page: number) {
         embed.addField("Command:", `@SRCBot ${command.command}`);
         embed.addField("Description", command.helpMessage);
         embed.addField("Template", command.template);
@@ -144,13 +144,13 @@ export class Help implements Command {
             exampleString = exampleString + (index + 1) + ". " + example + "\n";
         });
         embed.addField("Examples", exampleString);
-        embed.addField("PAGE", page);
+        embed.addField("PAGE", page.toString());
 
         let member = message.member;
         if (member) {
-            return member.send(embed);
+            return member.send({embeds:[embed]});
         } else {
-            return message.channel.send(embed);
+            return message.channel.send({embeds:[embed]});
         }
     }
 

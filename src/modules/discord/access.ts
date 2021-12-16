@@ -25,13 +25,14 @@ export class Access {
     public static readonly FORBIDDEN: string = "forbidden";
 
     public static async has(author: User, guild: Guild, perms: string[], allowAdmin = false): Promise<boolean> {
-        let member = guild.member(author)
-        if (allowAdmin && member.hasPermission("ADMINISTRATOR")) {
+        let member = guild.members.fetch(author)
+        if (allowAdmin && (await member).permissions.has("ADMINISTRATOR")) {
             return true;
         } else {
+            let loadedMember = await(member);
             let db = App.db;
-            let guildId = member.guild.id;
-            let roles = member.roles;
+            let guildId = loadedMember.guild.id;
+            let roles = loadedMember.roles;
             let guild = await db.model.guild.findOne({guild_id: guildId});
             let bool = false;
             if (guild) {

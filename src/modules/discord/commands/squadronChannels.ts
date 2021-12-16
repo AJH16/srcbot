@@ -72,7 +72,7 @@ export class SquadronChannels implements Command {
                     let flags = Permissions.FLAGS;
                     if (message.guild.me.permissionsIn(message.channel).has([flags.EMBED_LINKS])) {
                         let embed = await this.getRandomSquadronEmbed(guildId, message.channel as TextChannel, numberToSelect, categoryToSelect);
-                        message.channel.send(embed);
+                        message.channel.send({embeds:[embed]});
                     } else {
                         try {
                             message.channel.send(Responses.getResponse(Responses.EMBEDPERMISSION));
@@ -261,7 +261,7 @@ export class SquadronChannels implements Command {
                 return
             }
             for (const category of categories) {
-                let channelsToSort = channel.guild.channels.cache.filter(channel => channel.parentID === category.id).array()
+                let channelsToSort = channel.guild.channels.cache.filter(channel => channel.parentId === category.id)
                 channelsToSort.sort((firstChannel, secondChannel) => {
                     const firstChannelName = firstChannel.name.startsWith('💎') ? firstChannel.name.slice(2).toLowerCase() : firstChannel.name.toLowerCase()
                     const secondChannelName = secondChannel.name.startsWith('💎') ? secondChannel.name.slice(2).toLowerCase() : secondChannel.name.toLowerCase()
@@ -273,7 +273,7 @@ export class SquadronChannels implements Command {
                         return 0
                     }
                 });
-                for (let i = 0; i < channelsToSort.length; i++) {
+                for (let i = 0; i < channelsToSort.size; i++) {
                     if (channelsToSort[i].position !== i) {
                         await channelsToSort[i].setPosition(i)
                     }
@@ -313,7 +313,7 @@ export class SquadronChannels implements Command {
                 channel.send(Responses.getResponse(Responses.IDNOTFOUND));
                 return
             }
-            let channelsToSelect = channel.guild.channels.cache.filter(channel => categories.map(category => category.id).includes(channel.parentID)).array()
+            let channelsToSelect = channel.guild.channels.cache.filter(channel => categories.map(category => category.id).includes(channel.parentId))
             channelsToSelect = sampleSize(channelsToSelect, numberToSelect)
             let embed = new MessageEmbed()
             embed.setTitle("Selected Squadrons")

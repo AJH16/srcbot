@@ -65,7 +65,7 @@ export class MyGuild implements Command {
     async set(message: Message, argsArray: string[]) {
         // Only the server admins can set the guild
         let member = await message.member;
-        if (member.hasPermission("ADMINISTRATOR")) {
+        if (member.permissions.has("ADMINISTRATOR")) {
             if (argsArray.length === 1) {
                 let guildId = message.guild.id;
 
