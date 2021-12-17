@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Client, Intents, DMChannel, Message, User } from 'discord.js';
+import { Client, Intents, DMChannel, Message, User, CommandInteraction, CacheType, MessagePayload, MessageActionRow, MessageButton } from 'discord.js';
 import { DiscordSecrets } from '../../secrets';
 import { Responses } from './responseDict';
 import {
@@ -34,6 +34,7 @@ import { DB } from '../../db';
 import { Command } from "../../interfaces/Command";
 import { SquadronLeaderRoles } from "./commands/squadronLeaderRoles";
 import { Login } from './commands/login';
+import { FrontierSecrets } from '../../secrets';
 
 export class DiscordClient {
     public client: Client;
@@ -58,6 +59,12 @@ export class DiscordClient {
             this.houseKeeping = new HouseKeeping();
             this.initiateCommands();
             this.createHelp();
+        });
+
+        this.client.on('interactionCreate', async interaction => {
+            if(!interaction.isCommand()) return;
+
+            this.processCommand(interaction);
         });
 
         this.client.on("message", async (message) => {
@@ -146,6 +153,7 @@ export class DiscordClient {
         this.commandsMap.set("squadchannels", squadronChannels);
         this.commandsMap.set("sqch", squadronChannels);
         this.commandsMap.set("login", login);
+        this.commandsMap.set("validate", login);
     }
 
     createHelp(): void {
@@ -171,6 +179,20 @@ export class DiscordClient {
             commandArguments = messageArray.slice(1, messageArray.length).join(" ");
         }
         return {command, commandArguments}
+    }
+
+    public processCommand(interaction: CommandInteraction<CacheType>): void {
+        const {commandName} = interaction;
+        if(this.commandsMap.has(commandName)){
+            console.log(commandName + " command requested");
+            let row = new MessageActionRow().addComponents(
+                new MessageButton()
+                    .setLabel('Validate Commander')
+                    .setStyle('LINK')
+                    .setURL('https://auth.frontierstore.net/auth?response_type=code&client_id=' + FrontierSecrets.clientId + '&state=' + interaction.member.user.id + '&scope=capi&redirect_uri=' + encodeURI(FrontierSecrets.redirectURL))
+            );
+            interaction.reply({content: 'Click the link to authenticate with Frontier and validate your commander.', ephemeral: true, components:[row]})
+        }
     }
 
     public processNormal(message: Message): void {

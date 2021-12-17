@@ -21,7 +21,10 @@ import IndexRouter from './routes/index';
 import { DiscordClient } from './modules/discord/client';
 import { DB } from './db';
 import { BugsnagClient } from './bugsnag';
-import { BugsnagSecrets } from './secrets';
+import { BugsnagSecrets, DiscordSecrets } from './secrets';
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 
 class App {
     public express: express.Application;
@@ -37,6 +40,7 @@ class App {
             this.bugsnagClientMiddleware = this.bugsnagClient.client.getPlugin('express');
             this.express.use(this.bugsnagClientMiddleware.requestHandler);
         }
+        this.configureAppCommands();
         this.middleware();
         this.routes();
         this.discordClient = new DiscordClient();
@@ -46,6 +50,22 @@ class App {
 
     private async setup() {
         await this.db.connectToDB()
+    }
+
+    private configureAppCommands(){
+        if (DiscordSecrets.createCommand)
+        {
+        let commands = [
+            new SlashCommandBuilder().setName('validate').setDescription('Validate Commander'),
+        ]
+            .map(command => command.toJSON());
+
+        let rest = new REST({ version: '9' }).setToken(DiscordSecrets.token);
+
+        rest.put(Routes.applicationGuildCommands(DiscordSecrets.applicationId, DiscordSecrets.guildId), { body: commands })
+	    .then(() => console.log('Successfully registered application commands.'))
+	    .catch(console.error);
+        }
     }
 
     private middleware(): void {
